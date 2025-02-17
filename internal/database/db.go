@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"log"
@@ -9,6 +9,11 @@ import (
 
 // переменная, через которую мы будем работать с БД
 var DB *gorm.DB
+
+type Message struct {
+	ID      uint `gorm:"primaryKey"`
+	Content string
+}
 
 func InitDB() {
 	// в dsn вводим данные, которые мы указали при создании контейнера
