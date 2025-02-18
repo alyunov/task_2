@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"task_2/internal/taskService" // Импортируем наш сервис
+
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -25,6 +27,7 @@ func (h *Handler) GetTasksHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(tasks)
 }
 
@@ -43,12 +46,12 @@ func (h *Handler) PostTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdTask)
 }
 
 func (h *Handler) PatchTaskHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
 		return
@@ -68,12 +71,12 @@ func (h *Handler) PatchTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(updatedTask)
 }
 
 func (h *Handler) DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
 		http.Error(w, "Invalid task ID", http.StatusBadRequest)
 		return
